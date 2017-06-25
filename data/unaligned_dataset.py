@@ -24,7 +24,7 @@ class UnalignedDataset(BaseDataset):
 
         transform_list = []
         if opt.resize_or_crop == 'resize_and_crop':
-            osize = [opt.loadSize, opt.loadSize]
+            osize = [opt.loadSize, opt.loadHeight]
             transform_list.append(transforms.Scale(osize, Image.BICUBIC))
 
         if opt.isTrain and not opt.no_flip:
