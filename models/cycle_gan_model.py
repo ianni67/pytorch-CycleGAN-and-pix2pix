@@ -28,9 +28,9 @@ class CycleGANModel(BaseModel):
         # Code (paper): G_A (G), G_B (F), D_A (D_Y), D_B (D_X)
 
         self.netG_A = networks.define_G(opt.input_nc, opt.output_nc,
-                                        opt.ngf, opt.which_model_netG, opt.norm, opt.use_dropout, self.gpu_ids)
+                                        opt.ngf, opt.which_model_netG, opt.norm, not opt.no_dropout, self.gpu_ids)
         self.netG_B = networks.define_G(opt.output_nc, opt.input_nc,
-                                        opt.ngf, opt.which_model_netG, opt.norm, opt.use_dropout, self.gpu_ids)
+                                        opt.ngf, opt.which_model_netG, opt.norm, not opt.no_dropout, self.gpu_ids)
 
         if self.isTrain:
             use_sigmoid = opt.no_lsgan
@@ -62,12 +62,13 @@ class CycleGANModel(BaseModel):
             self.optimizer_D_A = torch.optim.Adam(self.netD_A.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
             self.optimizer_D_B = torch.optim.Adam(self.netD_B.parameters(), lr=opt.lr, betas=(opt.beta1, 0.999))
 
-            print('---------- Networks initialized -------------')
-            networks.print_network(self.netG_A)
-            networks.print_network(self.netG_B)
+        print('---------- Networks initialized -------------')
+        networks.print_network(self.netG_A)
+        networks.print_network(self.netG_B)
+        if self.isTrain:
             networks.print_network(self.netD_A)
             networks.print_network(self.netD_B)
-            print('-----------------------------------------------')
+        print('-----------------------------------------------')
 
     def set_input(self, input):
         AtoB = self.opt.which_direction == 'AtoB'

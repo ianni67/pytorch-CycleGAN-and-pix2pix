@@ -24,7 +24,7 @@ class Pix2PixModel(BaseModel):
 
         # load/define networks
         self.netG = networks.define_G(opt.input_nc, opt.output_nc, opt.ngf,
-                                      opt.which_model_netG, opt.norm, opt.use_dropout, self.gpu_ids)
+                                      opt.which_model_netG, opt.norm, not opt.no_dropout, self.gpu_ids)
         if self.isTrain:
             use_sigmoid = opt.no_lsgan
             self.netD = networks.define_D(opt.input_nc + opt.output_nc, opt.ndf,
@@ -48,10 +48,11 @@ class Pix2PixModel(BaseModel):
             self.optimizer_D = torch.optim.Adam(self.netD.parameters(),
                                                 lr=opt.lr, betas=(opt.beta1, 0.999))
 
-            print('---------- Networks initialized -------------')
-            networks.print_network(self.netG)
+        print('---------- Networks initialized -------------')
+        networks.print_network(self.netG)
+        if self.isTrain:
             networks.print_network(self.netD)
-            print('-----------------------------------------------')
+        print('-----------------------------------------------')
 
     def set_input(self, input):
         AtoB = self.opt.which_direction == 'AtoB'
